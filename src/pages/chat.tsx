@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import { useState } from 'react'
 import {
+  Input,
   Center,
   Box,
   Text,
@@ -29,6 +30,7 @@ import {
   Divider,
   useClipboard,
   useToast,
+  Textarea,
 } from '@chakra-ui/react'
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 
@@ -68,6 +70,7 @@ const Home: NextPage = () => {
     auth.signOut()
   }
 
+  // Function to copy PIN
   const { hasCopied, onCopy } = useClipboard(user.pin)
   const toast = useToast()
   const getPin = (ev) => {
@@ -80,6 +83,9 @@ const Home: NextPage = () => {
       isClosable: true,
     })
   }
+
+  // Textarea
+  const [text, setText] = useState('')
 
   return (
     <Grid bg="red" h={'100vh'} templateColumns="repeat(4, 1fr)">
@@ -163,19 +169,27 @@ const Home: NextPage = () => {
 
       {/* Messages */}
       <GridItem colSpan={3} bg="papayawhip">
-        <Flex direction="column-reverse">
-          {/* Messages */}
-          {listChat[0].messages.map((el, i) => {
-            const isUser = el.from == user.pin
-            return (
-              <Flex align="flex-end" justify={isUser && 'flex-end'} key={i} w="100%" p={3} gap="5px" bg="blue">
-                {!isUser && <Avatar name={el.from}></Avatar>}
-                <Box borderRadius="md" bg="orange" p={5}>
-                  <Text>{el.body}</Text>
-                </Box>
-              </Flex>
-            )
-          })}
+        <Flex h="100%" direction="column" justify="space-between">
+          <Flex maxH="90vh" overflowY="scroll" direction="column-reverse">
+            {/* Messages */}
+            {listChat[0].messages.map((el, i) => {
+              const isUser = el.from == user.pin
+              return (
+                <Flex align="flex-end" justify={isUser && 'flex-end'} key={i} w="100%" p={3} gap="5px" bg="blue">
+                  {!isUser && <Avatar name={el.from}></Avatar>}
+                  <Box borderRadius="md" bg="orange" p={5}>
+                    <Text>{el.body}</Text>
+                  </Box>
+                </Flex>
+              )
+            })}
+          </Flex>
+          <Flex h="10vh" align="center">
+            <Input value={text} onChange={setText} placeholder="Digite aqui...." size="lg"></Input>
+            <Button size="lg" colorScheme="blue">
+              Send
+            </Button>
+          </Flex>
         </Flex>
       </GridItem>
     </Grid>
