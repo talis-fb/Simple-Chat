@@ -5,6 +5,8 @@ import { RootState } from './store'
 const userSlice = createSlice({
   name: 'user',
   initialState: {
+    uuid: '',
+    pin: '2131',
     name: '',
     email: '',
     photoProfile: '',
@@ -21,8 +23,8 @@ const userSlice = createSlice({
 
 const getName = (state: RootState) => state.user.name
 const getEmail = (state: RootState) => state.user.email
-const getPhotoProfile = (state: RootState) => state.user.photoProfile
+const getUser = (state: RootState) => state.user
 
-export { getEmail, getName, getPhotoProfile }
+export { getEmail, getName, getUser }
 export const { updateName, updatePhotoProfile } = userSlice.actions
 export default userSlice.reducer

@@ -1,18 +1,9 @@
 import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
 import { useState } from 'react'
 import {
-  ChakraProvider,
   Center,
   Box,
   Text,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  FormHelperText,
-  Input,
   Flex,
   Spacer,
   Avatar,
@@ -39,41 +30,51 @@ import {
   useClipboard,
   useToast,
 } from '@chakra-ui/react'
-
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
+
 import { getAuth } from 'firebase/auth'
 import { initializeApp } from 'firebase/app'
 import firebaseConfig from '../../firebase-config.json'
 
+// Import of useSelector and UseDispatch, but with type of our store
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { getName, getUser, getEmail, updateName, updatePhotoProfile } from '../store/userSlice'
+import { newMessage, selectChat, selectChatMessages, selectAllChat } from '../store/chatsSlice'
+
 const Home: NextPage = () => {
+  // store
+  const user = useAppSelector(getUser)
+
+  // Hooks
+  const dispatch = useAppDispatch()
   const app = initializeApp(firebaseConfig)
   const auth = getAuth()
   const [isOpen, setOpen] = useState(0)
   const onOpen = () => setOpen(1)
   const onClose = () => setOpen(0)
 
-  const conversas_example = [
-    { body: 'Opa', from: 1 },
-    { body: 'Opa', from: 1 },
-    { body: 'Opa', from: 2 },
-    { body: 'Opa', from: 2 },
-    { body: 'Opa', from: 1 },
-    { body: 'Opa', from: 1 },
-    { body: 'Opa', from: 1 },
-    { body: 'Opa', from: 1 },
-  ]
+  // Manage of chats
+  // const [openChat, setOpenChat] = useState<string>('main')
+  const [openChat, setOpenChat] = useState<string>('main')
+  const conversas = useAppSelector(selectAllChat)
+  const listChat = Object.values(conversas)
+  console.log('conversas')
+  console.log(conversas)
+  console.log('listChat')
+  console.log(listChat)
 
+  // User
   const logout = () => {
     auth.signOut()
   }
 
-  const { hasCopied, onCopy } = useClipboard('1232d21')
+  const { hasCopied, onCopy } = useClipboard(user.pin)
   const toast = useToast()
   const getPin = (ev) => {
     onCopy()
     toast({
       title: 'PIN copiado',
-      description: "We've created your account for you.",
+      description: 'Basta agora clicar Ctrl+V e enviar para seus abiguinhos',
       status: 'success',
       duration: 9000,
       isClosable: true,
@@ -85,10 +86,10 @@ const Home: NextPage = () => {
       <GridItem colSpan={1} bg="tomato">
         <Flex h={'100%'} direction="column">
           <HStack>
-            <Avatar name="Talison Fabio"></Avatar>
+            <Avatar name={user.name}></Avatar>
             <Spacer></Spacer>
             <Button onClick={getPin} colorScheme="teal" variant="solid">
-              #dkfsadas
+              #{user.pin}
             </Button>
             <Spacer></Spacer>
 
@@ -106,28 +107,22 @@ const Home: NextPage = () => {
 
           <Divider></Divider>
 
-          <VStack
-            _hover={{ backgroundColor: 'red' }}
-            divider={<StackDivider borderColor="gray.200" />}
-            spacing={4}
-            align="stretch"
-          >
-            <Flex p={1}>
-              <Avatar name="Gustavo Freire"></Avatar>
-              <Center>
-                <Text>Eis aqui uma mensagem random</Text>
-              </Center>
-            </Flex>
-          </VStack>
-
-          <VStack divider={<StackDivider borderColor="gray.200" />} spacing={4} align="stretch">
-            <Flex p={1}>
-              <Avatar name="Gustavo Freire"></Avatar>
-              <Center>
-                <Text>Eis aqui uma mensagem random</Text>
-              </Center>
-            </Flex>
-          </VStack>
+          {listChat.map((el, i) => (
+            <VStack
+              key={i}
+              _hover={{ backgroundColor: 'red' }}
+              divider={<StackDivider borderColor="gray.200" />}
+              spacing={4}
+              align="stretch"
+            >
+              <Flex p={1}>
+                <Avatar name={el.name}></Avatar>
+                <Center>
+                  <Text>{el.messages[el.messages.length - 1].body}</Text>
+                </Center>
+              </Flex>
+            </VStack>
+          ))}
 
           <Spacer></Spacer>
 
@@ -170,11 +165,11 @@ const Home: NextPage = () => {
       <GridItem colSpan={3} bg="papayawhip">
         <Flex direction="column-reverse">
           {/* Messages */}
-          {conversas_example.map((el, i) => {
-            const isUser = i == 1
+          {listChat[0].messages.map((el, i) => {
+            const isUser = el.from == user.pin
             return (
               <Flex align="flex-end" justify={isUser && 'flex-end'} key={i} w="100%" p={3} gap="5px" bg="blue">
-                {!isUser && <Avatar name="Talison Fabio"></Avatar>}
+                {!isUser && <Avatar name={el.from}></Avatar>}
                 <Box borderRadius="md" bg="orange" p={5}>
                   <Text>{el.body}</Text>
                 </Box>

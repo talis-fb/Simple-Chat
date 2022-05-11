@@ -13,6 +13,7 @@ const chatsSlice = createSlice({
     root: {
       // Aqui são adicionados todos os chatos, o chat main se trata da conversa apenas local daqui
       main: {
+        name: 'Chat',
         messages: [{ body: 'bom dia', from: 'uuid-contato' }],
       },
     },
@@ -36,6 +37,8 @@ const selectChat = function (id: string = 'main') {
   return (state: RootState) => state.chats.root[id]
 }
 
-export { selectChatMessages, selectChat }
+const selectAllChat = (state: RootState) => state.chats.root
+
+export { selectChatMessages, selectChat, selectAllChat }
 export const { newMessage } = chatsSlice.actions
 export default chatsSlice.reducer
