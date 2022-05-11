@@ -1,0 +1,7 @@
+# Ignore atifacts:
+build
+coverage
+
+# Ignore all HTML files:
+*.html
+node_modules/**
