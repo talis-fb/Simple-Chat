@@ -5,18 +5,25 @@ import { RootState } from './store'
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    uuid: '',
-    pin: '2131',
+    uid: '',
+    pin: '',
     name: '',
     email: '',
-    photoProfile: '',
+    photoURL: '',
   },
   reducers: {
     updateName: (state, action) => {
       state.name = action.payload
     },
     updatePhotoProfile: (state, action) => {
-      state.photoProfile = action.payload
+      state.photoURL = action.payload
+    },
+    updateUser: (state, action) => {
+      state.uid = action.payload.uid
+      state.pin = action.payload.pin
+      state.name = action.payload.displayName
+      state.email = action.payload.email
+      state.photoURL = action.payload.photoURL
     },
   },
 })
@@ -26,5 +33,5 @@ const getEmail = (state: RootState) => state.user.email
 const getUser = (state: RootState) => state.user
 
 export { getEmail, getName, getUser }
-export const { updateName, updatePhotoProfile } = userSlice.actions
+export const { updateName, updatePhotoProfile, updateUser } = userSlice.actions
 export default userSlice.reducer

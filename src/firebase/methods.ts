@@ -1,0 +1,55 @@
+import { randomUUID } from 'crypto'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth'
+import { addDoc, collection, doc, getDoc, setDoc, updateDoc, query, where, getDocs } from 'firebase/firestore'
+
+// Import of useSelector and UseDispatch, but with type of our store
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { updateUser } from '../store/userSlice'
+import { app, auth, db } from './index'
+
+const SignUp = async (email: string, senha: string, options) => {
+  const { displayName, photoURL } = options
+
+  try {
+    await createUserWithEmailAndPassword(auth, email, senha)
+    await updateProfile(auth.currentUser, {
+      displayName,
+      photoURL,
+    })
+
+    const pin = Math.floor(Math.random() * 100000).toString()
+
+    const userDoc = doc(db, 'users', auth.currentUser.uid)
+
+    await setDoc(userDoc, {
+      name: auth.currentUser.displayName,
+      email: auth.currentUser.email,
+      pin: pin,
+      chats: {},
+    })
+  } catch (err) {
+    console.log('ERRUUUUUUUUU no login')
+    console.log(err)
+    return err
+  }
+}
+
+const SignIn = (email: string, senha: string) => {}
+
+const SignOut = async () => await auth.signOut()
+
+const getUserWithPin = async (pin: string) => {
+  // Cria a query para extrair
+  const q = query(collection(db, 'users'), where('pin', '==', pin))
+  const dadesOfUser = await getDocs(q)
+
+  // Salva o dado extraido e retorna
+  let dades = null
+  dadesOfUser.forEach((doc) => {
+    dades = doc.data()
+  })
+
+  return dades
+}
+
+export { SignIn, SignUp, SignOut, getUserWithPin }

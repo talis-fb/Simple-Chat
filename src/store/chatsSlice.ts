@@ -14,7 +14,18 @@ const chatsSlice = createSlice({
       // Aqui são adicionados todos os chatos, o chat main se trata da conversa apenas local daqui
       main: {
         name: 'Chat',
-        messages: [{ body: 'bom dia', from: 'uuid-contato' }],
+        messages: [
+          { body: 'bom dia', from: 'uuid-contato' },
+          { body: 'bom dia', from: 'uuid-contato' },
+          { body: 'bom dia', from: 'uuid-contato' },
+          { body: 'bom dia', from: 'uuid-contato' },
+          { body: 'bom dia', from: 'uuid-contato' },
+          { body: 'bom dia', from: 'uuid-contato' },
+          { body: 'bom dia', from: 'uuid-contato' },
+          { body: 'bom dia', from: 'uuid-contato' },
+          { body: 'bom dia', from: 'uuid-contato' },
+          { body: 'bom dia', from: 'uuid-contato' },
+        ],
       },
     },
   },

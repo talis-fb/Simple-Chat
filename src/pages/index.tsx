@@ -10,98 +10,19 @@ import firebaseConfig from '../../firebase-config.json'
 import { initializeApp } from 'firebase/app'
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth'
 import { getFirestore, collection, addDoc, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
+import { SignIn, SignUp } from '../firebase/methods'
 
 const Home: NextPage = () => {
   const app = initializeApp(firebaseConfig)
-  const router = useRouter()
 
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
-
+  const [name, setName] = useState('')
   const changeEmail = (event) => setEmail(event.target.value)
   const changePassword = (event) => setSenha(event.target.value)
+  const changeName = (event) => setName(event.target.value)
 
-  // const [se, setSenha] = useState('')
-
-  const auth = getAuth()
-  const [user, setUser] = useState(auth.currentUser && auth.currentUser.email)
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        router.push('/chat')
-        console.log('AUTH')
-        console.log(user.email)
-        setUser(user.email)
-      }
-    })
-  }, [])
-
-  const submit = async () => {
-    console.log('APPP')
-    console.log(app)
-
-    createUserWithEmailAndPassword(auth, email, senha)
-      .then((userCredential) => {
-        const user = userCredential.user
-        console.log('LOGADUUUUUUUU')
-        console.log(user)
-        console.log('APPP APOS')
-        console.log(app)
-      })
-      .catch((error) => {
-        const errorCode = error.code
-        const errorMessage = error.message
-        console.log('ERRUUUUUUUUU no login')
-        console.log(errorCode)
-        console.log(errorMessage)
-      })
-  }
-
-  // Oq  de fato vai salvar
-  const add_DB = async () => {
-    const db = getFirestore(app)
-    console.log('firestoen')
-    console.log(db)
-
-    // const washingtonRef = doc(db, 'cities', 'DV')
-    // console.log(washingtonRef)
-    // console.log('washingtonRef')
-    // const washingtonRef2 = doc(db, 'usuarios', 'nome')
-    // console.log('washingtonRef2')
-
-    const usersColletion = collection(db, 'users') //, auth.currentUser.uid)
-    console.log('Colletion')
-    console.log(usersColletion)
-    // console.log(await getDoc(usersColletion))
-
-    const userDoc = doc(db, 'users', auth.currentUser.uid)
-    await setDoc(userDoc, {
-      name: auth.currentUser.displayName,
-      email: auth.currentUser.email,
-      sdsadas: auth.currentUser.email,
-      chats: {
-        '2uidsads': 'id-da-conversa',
-      },
-    })
-
-    const chatsDoc = doc(db, 'chats')
-    await setDoc(chatsDoc, {
-      name: auth.currentUser.displayName,
-      email: auth.currentUser.email,
-      sdsadas: auth.currentUser.email,
-      chats: {
-        '2uidsads': 'id-da-conversa',
-      },
-    })
-    // await updateDoc(washingtonRef, {
-    //   capital: true,
-    // })
-
-    // await addDoc(collection(db, 'testeusuarios'), {
-    //   idade: 12,
-    //   nome: 'Lovelace',
-    // })
-  }
+  // const auth = getAuth()
 
   return (
     <div className={styles.container}>
@@ -113,8 +34,13 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <Center>
-          <div>{user || 'TAIS OFF!!!'}</div>
+          <div>TAIS OFF!!!</div>
           <Flex direction="column" gap="8px">
+            <FormControl>
+              <FormLabel>Nome</FormLabel>
+              <Input type="text" onChange={changeName} id="name"></Input>
+            </FormControl>
+
             <FormControl>
               <FormLabel>Email</FormLabel>
               <Input type="email" onChange={changeEmail} id="email"></Input>
@@ -127,12 +53,8 @@ const Home: NextPage = () => {
               <FormErrorMessage>Não caga com a senha não...</FormErrorMessage>
             </FormControl>
 
-            <Button type="submit" onClick={submit} colorScheme="blue">
+            <Button type="submit" onClick={() => SignUp(email, senha, { displayName: name })} colorScheme="blue">
               Submit
-            </Button>
-
-            <Button onClick={add_DB} colorScheme="blue">
-              Submitaaa
             </Button>
           </Flex>
 

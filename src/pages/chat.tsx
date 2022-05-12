@@ -59,11 +59,11 @@ const Home: NextPage = () => {
   // const [openChat, setOpenChat] = useState<string>('main')
   const [openChat, setOpenChat] = useState<string>('main')
   const conversas = useAppSelector(selectAllChat)
-  const listChat = Object.values(conversas)
-  console.log('conversas')
-  console.log(conversas)
-  console.log('listChat')
-  console.log(listChat)
+  const listChat = Object.values(conversas || {})
+  // console.log('conversas')
+  // console.log(conversas)
+  // console.log('listChat')
+  // console.log(listChat)
 
   // User
   const logout = () => {
@@ -184,7 +184,7 @@ const Home: NextPage = () => {
               )
             })}
           </Flex>
-          <Flex h="10vh" align="center">
+          <Flex p={2} gap={2} h="10vh" align="center">
             <Input value={text} onChange={setText} placeholder="Digite aqui...." size="lg"></Input>
             <Button size="lg" colorScheme="blue">
               Send
