@@ -6,16 +6,28 @@ import { useRouter } from 'next/router'
 import firebaseConfig from '../../firebase-config.json'
 import { initializeApp } from 'firebase/app'
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth'
-import { getFirestore, collection, addDoc, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
-
-import { SignIn, SignUp, SignOut, getUserWithPin } from './methods'
+import { getFirestore, collection, addDoc, doc, getDoc, setDoc, updateDoc, onSnapshot } from 'firebase/firestore'
 
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { updateUser } from '../store/userSlice'
-import { randomUUID } from 'crypto'
+import store from '../store/store'
 
-const app = initializeApp(firebaseConfig)
-const auth = getAuth()
-const db = getFirestore(app)
+export const app = initializeApp(firebaseConfig)
+export const auth = getAuth()
+export const db = getFirestore(app)
 
-export { app, auth, db }
+// Sincronizacao com os dados do Usuario sno firebase em tempor real
+let userFinishSync = () => {}
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    console.log('user')
+    console.log(user)
+    userFinishSync()
+    userFinishSync = onSnapshot(doc(db, 'users', user.uid), (doc) => {
+      const newDades = doc.data()
+      store.dispatch({ type: 'user/updateUser', payload: { ...newDades, uid: user.uid } })
+      console.log('DADES OF USER CHANGE')
+      console.log(newDades)
+    })
+  }
+})

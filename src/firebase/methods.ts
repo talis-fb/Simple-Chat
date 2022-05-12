@@ -7,20 +7,19 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { updateUser } from '../store/userSlice'
 import { app, auth, db } from './index'
 
-const SignUp = async (email: string, senha: string, options) => {
-  const { displayName, photoURL } = options
-
+const SignUp = async (email: string, senha: string, displayName?: string, photoURL?: string) => {
   try {
     await createUserWithEmailAndPassword(auth, email, senha)
-    await updateProfile(auth.currentUser, {
-      displayName,
-      photoURL,
-    })
+    // await updateProfile(auth.currentUser, {
+    //   displayName,
+    //   photoURL,
+    // })
 
+    // Pin do contato
     const pin = Math.floor(Math.random() * 100000).toString()
 
+    // Save in firestore
     const userDoc = doc(db, 'users', auth.currentUser.uid)
-
     await setDoc(userDoc, {
       name: auth.currentUser.displayName,
       email: auth.currentUser.email,

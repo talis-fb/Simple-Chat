@@ -10,7 +10,8 @@ interface IMessage {
 const chatsSlice = createSlice({
   name: 'chats',
   initialState: {
-    root: {
+    open: 'main',
+    chats: {
       // Aqui são adicionados todos os chatos, o chat main se trata da conversa apenas local daqui
       main: {
         name: 'Chat',
@@ -32,7 +33,10 @@ const chatsSlice = createSlice({
   reducers: {
     newMessage: (state, action: PayloadAction<{ id: string; message: IMessage }>) => {
       const { id, message } = action.payload
-      state.root[id].push(message)
+      state.chats[id].push(message)
+    },
+    setChatOpen: (state, action: PayloadAction<string>) => {
+      state.open = action.payload
     },
   },
 })
@@ -41,15 +45,15 @@ const chatsSlice = createSlice({
 // const ChatsIdType = Return
 
 const selectChatMessages = function (id: string = 'main') {
-  return (state: RootState) => state.chats.root[id].messages
+  return (state: RootState) => state.chats.chats[id].messages
 }
 
 const selectChat = function (id: string = 'main') {
-  return (state: RootState) => state.chats.root[id]
+  return (state: RootState) => state.chats.chats[id]
 }
 
-const selectAllChat = (state: RootState) => state.chats.root
+const selectAllChat = (state: RootState) => state.chats.chats
 
 export { selectChatMessages, selectChat, selectAllChat }
-export const { newMessage } = chatsSlice.actions
+export const { newMessage, setChatOpen } = chatsSlice.actions
 export default chatsSlice.reducer

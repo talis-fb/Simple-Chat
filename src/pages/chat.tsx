@@ -56,14 +56,9 @@ const Home: NextPage = () => {
   const onClose = () => setOpen(0)
 
   // Manage of chats
-  // const [openChat, setOpenChat] = useState<string>('main')
   const [openChat, setOpenChat] = useState<string>('main')
   const conversas = useAppSelector(selectAllChat)
   const listChat = Object.values(conversas || {})
-  // console.log('conversas')
-  // console.log(conversas)
-  // console.log('listChat')
-  // console.log(listChat)
 
   // User
   const logout = () => {

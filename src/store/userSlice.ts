@@ -21,7 +21,7 @@ const userSlice = createSlice({
     updateUser: (state, action) => {
       state.uid = action.payload.uid
       state.pin = action.payload.pin
-      state.name = action.payload.displayName
+      state.name = action.payload.name
       state.email = action.payload.email
       state.photoURL = action.payload.photoURL
     },
