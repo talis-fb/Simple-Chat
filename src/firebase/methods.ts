@@ -1,6 +1,17 @@
 import { randomUUID } from 'crypto'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth'
-import { addDoc, collection, doc, getDoc, setDoc, updateDoc, query, where, getDocs } from 'firebase/firestore'
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  query,
+  where,
+  getDocs,
+  arrayUnion,
+} from 'firebase/firestore'
 
 // Import of useSelector and UseDispatch, but with type of our store
 import { useAppDispatch, useAppSelector } from '../store/hooks'
@@ -51,4 +62,14 @@ const getUserWithPin = async (pin: string) => {
   return dades
 }
 
-export { SignIn, SignUp, SignOut, getUserWithPin }
+const sendMessage = async (uidChat: string, message: { body: string; from: string }) => {
+  const { body, from } = message
+  const messageDoc = doc(db, 'chats', uidChat)
+
+  // Atomically add a new region to the "regions" array field.
+  await updateDoc(messageDoc, {
+    messages: arrayUnion({ body, from }),
+  })
+}
+
+export { SignIn, SignUp, SignOut, getUserWithPin, sendMessage }

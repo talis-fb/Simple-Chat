@@ -42,7 +42,7 @@ const syncChatStoreWithFirestore = (user) => {
         store.dispatch({
           type: 'chats/setNewConversation',
           payload: {
-            uid: uidContactsOfChats[i],
+            uid: chatUid,
             name: uidContactsOfChats[i],
             messages: allMessages,
           },

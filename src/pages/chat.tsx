@@ -37,6 +37,7 @@ import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import { getAuth } from 'firebase/auth'
 import { initializeApp } from 'firebase/app'
 import firebaseConfig from '../../firebase-config.json'
+import { sendMessage as submitMessageFirestore } from '../firebase/methods'
 
 // Import of useSelector and UseDispatch, but with type of our store
 import { useAppDispatch, useAppSelector } from '../store/hooks'
@@ -89,8 +90,12 @@ const Home: NextPage = () => {
     })
   }
 
-  // Textarea
+  // Textarea and send message
   const [text, setText] = useState('')
+  const sendMessage = () => {
+    submitMessageFirestore(conversas[onChat].uid, { body: text, from: user.uid })
+    setText('')
+  }
 
   return (
     <Grid bg="red" h={'100vh'} templateColumns="repeat(4, 1fr)">
@@ -176,7 +181,7 @@ const Home: NextPage = () => {
       {/* Messages */}
       <GridItem colSpan={3} bg="papayawhip">
         <Flex h="100%" direction="column" justify="space-between">
-          <Flex maxH="90vh" overflowY="scroll" direction="column-reverse">
+          <Flex maxH="90vh" overflowY="scroll" direction="column">
             {/* Messages */}
             {conversas[onChat].messages.map((el, i) => {
               const isUser = el.from == user.pin
@@ -191,8 +196,13 @@ const Home: NextPage = () => {
             })}
           </Flex>
           <Flex p={2} gap={2} h="10vh" align="center">
-            <Input value={text} onChange={setText} placeholder="Digite aqui...." size="lg"></Input>
-            <Button size="lg" colorScheme="blue">
+            <Input
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="Digite aqui...."
+              size="lg"
+            ></Input>
+            <Button onClick={sendMessage} size="lg" colorScheme="blue">
               Send
             </Button>
           </Flex>
