@@ -67,6 +67,8 @@ const selectChat = function (id: string = 'main') {
 
 const selectAllChat = (state: RootState) => state.chats.chats
 
-export { selectChatMessages, selectChat, selectAllChat }
+const getChatOpen = (state: RootState) => state.chats.open
+
+export { selectChatMessages, selectChat, selectAllChat, getChatOpen }
 export const { newMessage, setChatOpen, setNewConversation } = chatsSlice.actions
 export default chatsSlice.reducer

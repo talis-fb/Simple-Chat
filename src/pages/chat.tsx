@@ -41,7 +41,14 @@ import firebaseConfig from '../../firebase-config.json'
 // Import of useSelector and UseDispatch, but with type of our store
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { getName, getUser, getEmail, updateName, updatePhotoProfile } from '../store/userSlice'
-import { newMessage, selectChat, selectChatMessages, selectAllChat } from '../store/chatsSlice'
+import {
+  newMessage,
+  selectChat,
+  selectChatMessages,
+  selectAllChat,
+  getChatOpen,
+  setChatOpen,
+} from '../store/chatsSlice'
 
 const Home: NextPage = () => {
   // store
@@ -58,7 +65,10 @@ const Home: NextPage = () => {
   // Manage of chats
   const [openChat, setOpenChat] = useState<string>('main')
   const conversas = useAppSelector(selectAllChat)
-  const listChat = Object.values(conversas || {})
+  const onChat = useAppSelector(getChatOpen)
+  const setOnChat = (chatName: string) => dispatch(setChatOpen(chatName))
+  const arrayOfConversasValues = Object.values(conversas)
+  const arrayOfConversasKeys = Object.keys(conversas)
 
   // User
   const logout = () => {
@@ -108,13 +118,14 @@ const Home: NextPage = () => {
 
           <Divider></Divider>
 
-          {listChat.map((el, i) => (
+          {arrayOfConversasValues.map((el, i) => (
             <VStack
               key={i}
               _hover={{ backgroundColor: 'red' }}
               divider={<StackDivider borderColor="gray.200" />}
               spacing={4}
               align="stretch"
+              onClick={() => setOnChat(arrayOfConversasKeys[i])}
             >
               <Flex p={1}>
                 <Avatar name={el.name}></Avatar>
@@ -167,7 +178,7 @@ const Home: NextPage = () => {
         <Flex h="100%" direction="column" justify="space-between">
           <Flex maxH="90vh" overflowY="scroll" direction="column-reverse">
             {/* Messages */}
-            {listChat[0].messages.map((el, i) => {
+            {conversas[onChat].messages.map((el, i) => {
               const isUser = el.from == user.pin
               return (
                 <Flex align="flex-end" justify={isUser && 'flex-end'} key={i} w="100%" p={3} gap="5px" bg="blue">
