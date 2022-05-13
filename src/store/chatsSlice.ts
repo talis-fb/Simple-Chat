@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { stat } from 'fs'
 
 import { RootState } from './store'
 
@@ -31,6 +32,18 @@ const chatsSlice = createSlice({
     },
   },
   reducers: {
+    setNewConversation: (
+      state,
+      action: PayloadAction<{
+        uid: string
+        messages: Array<{ body: string; from: string }>
+        name: string
+        photoURL?: string
+      }>
+    ) => {
+      const { uid } = action.payload
+      state.chats[uid] = action.payload
+    },
     newMessage: (state, action: PayloadAction<{ id: string; message: IMessage }>) => {
       const { id, message } = action.payload
       state.chats[id].push(message)
@@ -55,5 +68,5 @@ const selectChat = function (id: string = 'main') {
 const selectAllChat = (state: RootState) => state.chats.chats
 
 export { selectChatMessages, selectChat, selectAllChat }
-export const { newMessage, setChatOpen } = chatsSlice.actions
+export const { newMessage, setChatOpen, setNewConversation } = chatsSlice.actions
 export default chatsSlice.reducer
