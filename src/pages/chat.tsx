@@ -226,7 +226,8 @@ const Home: NextPage = () => {
           <Flex maxH="90vh" overflowY="scroll" direction="column">
             {/* Messages */}
             {conversas[onChat].messages.map((el, i) => {
-              const isUser = el.from == user.pin
+              // Trim used because there is a bug when it doesn't
+              const isUser = el.from.trim(el.from) == user.uid.trim(user.uid)
               return (
                 <Flex align="flex-end" justify={isUser && 'flex-end'} key={i} w="100%" p={3} gap="5px">
                   {!isUser && <Avatar src={conversas[onChat].photoURL} name={conversas[onChat].name}></Avatar>}
