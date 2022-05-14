@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import {
   Input,
   Center,
@@ -111,9 +111,11 @@ const Home: NextPage = () => {
 
   // Textarea and send message
   const [text, setText] = useState('')
-  const sendMessage = () => {
-    submitMessageFirestore(conversas[onChat].uid, { body: text, from: user.uid })
+  const anchorToScrollDownInSendMessage = useRef()
+  const sendMessage = async () => {
+    await submitMessageFirestore(conversas[onChat].uid, { body: text, from: user.uid })
     setText('')
+    anchorToScrollDownInSendMessage.current.scrollIntoView({ behavior: 'smooth' })
   }
 
   const dis = useDisclosure()
@@ -223,7 +225,7 @@ const Home: NextPage = () => {
       {/* Messages */}
       <GridItem colSpan={3}>
         <Flex h="100%" direction="column" justify="space-between">
-          <Flex maxH="90vh" overflowY="scroll" direction="column">
+          <Flex h="90vh" overflowY="scroll" direction="column">
             {/* Messages */}
             {conversas[onChat].messages.map((el, i) => {
               // Trim used because there is a bug when it doesn't
@@ -237,6 +239,7 @@ const Home: NextPage = () => {
                 </Flex>
               )
             })}
+            <div ref={anchorToScrollDownInSendMessage}></div>
           </Flex>
           <Flex p={2} gap={2} h="10vh" align="center">
             <Input
