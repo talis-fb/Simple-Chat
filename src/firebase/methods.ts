@@ -32,6 +32,7 @@ const SignUp = async (email: string, senha: string, displayName?: string, photoU
     // Save in firestore
     const userDoc = doc(db, 'users', auth.currentUser.uid)
     await setDoc(userDoc, {
+      uid: auth.currentUser.uid,
       name: auth.currentUser.displayName,
       email: auth.currentUser.email,
       pin: pin,
@@ -54,7 +55,7 @@ const getUserWithPin = async (pin: string) => {
   const dadesOfUser = await getDocs(q)
 
   // Salva o dado extraido e retorna
-  let dades = null
+  let dades
   dadesOfUser.forEach((doc) => {
     dades = doc.data()
   })
@@ -62,14 +63,48 @@ const getUserWithPin = async (pin: string) => {
   return dades
 }
 
+const addContact = async (pinToAdd: string, pinAdding: string) => {
+  const whoAdd = await getUserWithPin(pinToAdd)
+  const whoIsAdding = await getUserWithPin(pinAdding)
+  console.log(whoAdd)
+
+  if (!whoAdd || !whoIsAdding) {
+    console.log('nao existe o contato')
+    return 'nao existe o contato'
+  }
+  if (whoAdd.chats[whoIsAdding.uid] || whoIsAdding.chats[whoAdd.uid]) {
+    return 'ja existe um chat'
+  }
+
+  // Save in firestore
+  const pinChat = Math.floor(Math.random() * 100000).toString()
+  const chatDoc = doc(db, 'chats', pinChat)
+  await setDoc(chatDoc, {
+    messages: [{ body: 'hello', from: auth.currentUser.uid }],
+  })
+  // Criação de um chat novo
+
+  // Update no nosso contato
+
+  // Set the "capital" field of the city 'DC'
+  const userDocMe = doc(db, 'users', whoIsAdding.uid)
+  await updateDoc(userDocMe, {
+    chats: { ...whoIsAdding.chats, [whoAdd.uid]: pinChat },
+  })
+
+  // Update no contato adicionado
+  const userDocHim = doc(db, 'users', whoAdd.uid)
+  await updateDoc(userDocHim, {
+    chats: { ...whoAdd.chats, [whoIsAdding.uid]: pinChat },
+  })
+}
+
 const sendMessage = async (uidChat: string, message: { body: string; from: string }) => {
   const { body, from } = message
   const messageDoc = doc(db, 'chats', uidChat)
-
-  // Atomically add a new region to the "regions" array field.
   await updateDoc(messageDoc, {
     messages: arrayUnion({ body, from }),
   })
 }
 
-export { SignIn, SignUp, SignOut, getUserWithPin, sendMessage }
+export { SignIn, SignUp, SignOut, getUserWithPin, sendMessage, addContact }

@@ -37,7 +37,7 @@ import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import { getAuth } from 'firebase/auth'
 import { initializeApp } from 'firebase/app'
 import firebaseConfig from '../../firebase-config.json'
-import { sendMessage as submitMessageFirestore } from '../firebase/methods'
+import { sendMessage as submitMessageFirestore, addContact } from '../firebase/methods'
 
 // Import of useSelector and UseDispatch, but with type of our store
 import { useAppDispatch, useAppSelector } from '../store/hooks'
@@ -167,7 +167,7 @@ const Home: NextPage = () => {
 
                 <ModalFooter>
                   <Center>
-                    <Button variant="solid" colorScheme="green">
+                    <Button onClick={() => addContact('021', user.pin)} variant="solid" colorScheme="green">
                       Adicionar
                     </Button>
                   </Center>
