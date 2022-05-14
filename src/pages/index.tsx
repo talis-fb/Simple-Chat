@@ -116,7 +116,16 @@ const Home: NextPage = () => {
   }
 
   return (
-    <Flex justify="center" align="center" gap="50px" color="whitesmoke" h="100vh" w="100vw" bg="gray.700">
+    <Flex
+      justify="center"
+      direction={['column-reverse', 'row']}
+      align="center"
+      gap="50px"
+      color="whitesmoke"
+      h="100vh"
+      w="100vw"
+      bg="gray.700"
+    >
       <Flex direction="column" gap="8px">
         {signInOrUp ? SignUpForm() : SignInForm()}
 
@@ -130,7 +139,7 @@ const Home: NextPage = () => {
         </ButtonGroup>
       </Flex>
 
-      <Flex direction="column" align="center" justify="center" gap="20px">
+      <Flex direction={['row', 'column']} align="center" justify="center" gap="20px">
         <Heading maxW="25vw" textAlign="center">
           Bem vindo à um chat invocado!!
         </Heading>
