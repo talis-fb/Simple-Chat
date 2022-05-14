@@ -37,14 +37,17 @@ const syncChatStoreWithFirestore = (user) => {
     const uidChats = Object.values(allChats)
 
     uidChats.forEach((chatUid, i) => {
-      onSnapshot(doc(db, 'chats', chatUid), (docReturned) => {
+      onSnapshot(doc(db, 'chats', chatUid), async (docReturned) => {
         const allMessages = docReturned.data().messages
+        const dadesOfTheContact = await getDoc(doc(db, 'users', uidContactsOfChats[i]))
+
         store.dispatch({
           type: 'chats/setNewConversation',
           payload: {
             uid: chatUid,
-            name: uidContactsOfChats[i],
+            name: dadesOfTheContact.data().name,
             messages: allMessages,
+            photoURL: dadesOfTheContact.data().photoURL,
           },
         })
       })

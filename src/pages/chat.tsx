@@ -113,7 +113,6 @@ const Home: NextPage = () => {
     setText('')
   }
 
-
   const dis = useDisclosure()
   const isOpenDrawer = dis.isOpen
   const onOpenDrawer = dis.onOpen
@@ -212,7 +211,7 @@ const Home: NextPage = () => {
               sx={onChat == arrayOfConversasKeys[i] && { bg: 'gray.700', borderRight: '5px solid cyan' }}
             >
               <Flex gap={2}>
-                <Avatar name={el.name}></Avatar>
+                <Avatar src={el.photoURL} name={el.name}></Avatar>
                 <Center>
                   <Text>{el.messages[el.messages.length - 1].body}</Text>
                 </Center>
@@ -269,7 +268,7 @@ const Home: NextPage = () => {
               const isUser = el.from == user.pin
               return (
                 <Flex align="flex-end" justify={isUser && 'flex-end'} key={i} w="100%" p={3} gap="5px">
-                  {!isUser && <Avatar name={el.from}></Avatar>}
+                  {!isUser && <Avatar src={conversas[onChat].photoURL} name={conversas[onChat].name}></Avatar>}
                   <Box borderRadius="md" bg="green.600" p={5}>
                     <Text color="whitesmoke">{el.body}</Text>
                   </Box>
