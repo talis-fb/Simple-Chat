@@ -90,6 +90,9 @@ const Home: NextPage = () => {
     })
   }
 
+  // Add Pin
+  const [pinToAdd, setPinToAdd] = useState('')
+
   // Textarea and send message
   const [text, setText] = useState('')
   const sendMessage = () => {
@@ -155,7 +158,8 @@ const Home: NextPage = () => {
                   <Center>
                     <HStack>
                       <Text>#</Text>
-                      <PinInput type="alphanumeric">
+                      <PinInput onChange={setPinToAdd} type="alphanumeric">
+                        <PinInputField />
                         <PinInputField />
                         <PinInputField />
                         <PinInputField />
@@ -167,7 +171,7 @@ const Home: NextPage = () => {
 
                 <ModalFooter>
                   <Center>
-                    <Button onClick={() => addContact('021', user.pin)} variant="solid" colorScheme="green">
+                    <Button onClick={() => addContact(pinToAdd, user.pin)} variant="solid" colorScheme="green">
                       Adicionar
                     </Button>
                   </Center>
