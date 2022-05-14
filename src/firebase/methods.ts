@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import {
   addDoc,
   collection,
@@ -21,10 +21,6 @@ import { app, auth, db } from './index'
 const SignUp = async (email: string, senha: string, displayName?: string, photoURL?: string) => {
   try {
     await createUserWithEmailAndPassword(auth, email, senha)
-    // await updateProfile(auth.currentUser, {
-    //   displayName,
-    //   photoURL,
-    // })
 
     // Pin do contato
     const pin = Math.floor(Math.random() * 100000).toString()
@@ -48,6 +44,22 @@ const SignUp = async (email: string, senha: string, displayName?: string, photoU
 const SignIn = (email: string, senha: string) => {}
 
 const SignOut = async () => await auth.signOut()
+
+const updateProfile = async (dades: { name: string; photoURL: string }) => {
+  const { name, photoURL } = dades
+  const userDoc = doc(db, 'users', auth.currentUser.uid)
+  await updateDoc(userDoc, {
+    name: name || null,
+    photoURL: photoURL || null,
+  })
+}
+
+const getProfilePhotoOrNameUser = async (uid: string) => {
+  const dadesOfUser = await getDoc(doc(db, 'users', uid))
+  console.log('dadesOfUser')
+  console.log(dadesOfUser)
+  return dadesOfUser.data().photoURL || dadesOfUser.data().name || 'Foi'
+}
 
 const getUserWithPin = async (pin: string) => {
   // Cria a query para extrair
@@ -107,4 +119,4 @@ const sendMessage = async (uidChat: string, message: { body: string; from: strin
   })
 }
 
-export { SignIn, SignUp, SignOut, getUserWithPin, sendMessage, addContact }
+export { SignIn, SignUp, SignOut, getUserWithPin, sendMessage, addContact, getProfilePhotoOrNameUser, updateProfile }

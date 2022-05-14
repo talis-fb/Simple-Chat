@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Input,
   Center,
@@ -11,6 +11,7 @@ import {
   Grid,
   GridItem,
   Menu,
+  Image,
   MenuButton,
   MenuList,
   MenuItem,
@@ -30,14 +31,26 @@ import {
   Divider,
   useClipboard,
   useToast,
-  Textarea,
+  useDisclosure,
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
 } from '@chakra-ui/react'
 import { CloseIcon, EditIcon, SettingsIcon } from '@chakra-ui/icons'
 
 import { getAuth } from 'firebase/auth'
 import { initializeApp } from 'firebase/app'
 import firebaseConfig from '../../firebase-config.json'
-import { sendMessage as submitMessageFirestore, addContact, getProfilePhotoOrNameUser } from '../firebase/methods'
+import {
+  sendMessage as submitMessageFirestore,
+  addContact,
+  getProfilePhotoOrNameUser,
+  updateProfile,
+} from '../firebase/methods'
 
 // Import of useSelector and UseDispatch, but with type of our store
 import { useAppDispatch, useAppSelector } from '../store/hooks'
@@ -100,12 +113,69 @@ const Home: NextPage = () => {
     setText('')
   }
 
+
+  const dis = useDisclosure()
+  const isOpenDrawer = dis.isOpen
+  const onOpenDrawer = dis.onOpen
+  const onCloseDrawer = dis.onClose
+
+  // useEffect(() => {
+  //   if (!user.name && !user.photoURL) {
+  //     onOpenDrawer()
+  //   }
+  // }, [])
+
+  const [nameProfileSettings, setNameProfileSettings] = useState(user.name)
+  const [photoProfileSettings, setPhotoProfileSettings] = useState(user.photoURL)
+
+  const DrawerProfile = () => (
+    <Drawer isOpen={isOpenDrawer} placement="left" onClose={onCloseDrawer}>
+      <DrawerOverlay />
+      <DrawerContent color="whitesmoke" bg="gray.800">
+        <DrawerCloseButton />
+        <DrawerHeader>Ajeite o seu perfil...</DrawerHeader>
+
+        <DrawerBody>
+          <Input
+            value={nameProfileSettings}
+            onChange={(e) => setNameProfileSettings(e.target.value)}
+            mb={5}
+            placeholder="Name"
+          />
+          <Input
+            value={photoProfileSettings}
+            onChange={(e) => setPhotoProfileSettings(e.target.value)}
+            placeholder="Url para a sua foto do perfil"
+          />
+          <Center mt={5} h="200px">
+            <Image maxW="200px" borderRadius="full" fallbackSrc="" src={photoProfileSettings}></Image>
+          </Center>
+        </DrawerBody>
+
+        <DrawerFooter>
+          <Button variant="outline" mr={3} onClick={onCloseDrawer}>
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              updateProfile({ name: nameProfileSettings, photoURL: photoProfileSettings })
+              onCloseDrawer()
+            }}
+            colorScheme="blue"
+          >
+            Save
+          </Button>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  )
+
   return (
     <Grid bg="gray.800" h={'100vh'} templateColumns="repeat(4, 1fr)">
       <GridItem color="white" colSpan={1} bg="gray.900">
         <Flex h={'100%'} direction="column">
           <HStack p="2" mb={2}>
-            <Avatar name={user.name}></Avatar>
+            <Avatar src={user.photoURL} name={user.name}></Avatar>
             <Spacer></Spacer>
             <Button onClick={getPin} colorScheme="teal" variant="solid">
               #{user.pin}
@@ -117,7 +187,8 @@ const Home: NextPage = () => {
                 <SettingsIcon />
               </MenuButton>
               <MenuList color="black" bg="teal.600">
-                <MenuItem _hover={{ bg: 'teal.500' }} onClick={logout} icon={<EditIcon />}>
+                <MenuItem _hover={{ bg: 'teal.500' }} onClick={onOpenDrawer} icon={<EditIcon />}>
+                  {DrawerProfile()}
                   Edit Profile
                 </MenuItem>
                 <MenuItem _hover={{ bg: 'teal.500' }} onClick={logout} icon={<CloseIcon />}>
@@ -159,7 +230,7 @@ const Home: NextPage = () => {
             <Modal isOpen={isOpen} onClose={onClose}>
               <ModalOverlay />
               <ModalContent bg="cyan.50">
-                <ModalHeader>Adicionr pin...</ModalHeader>
+                <ModalHeader>Adicionar pin...</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
                   <Center>
