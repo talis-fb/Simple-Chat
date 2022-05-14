@@ -34,14 +34,21 @@ const SignUp = async (email: string, senha: string, displayName?: string, photoU
       pin: pin,
       chats: {},
     })
+    return { error: false, message: '' }
   } catch (err) {
-    console.log('ERRUUUUUUUUU no login')
-    console.log(err)
-    return err
+    console.log('[ERRO] Sign Uo')
+    throw new Error(err)
   }
 }
 
-const SignIn = (email: string, senha: string) => {}
+const SignIn = async (email: string, senha: string) => {
+  try {
+    const login = await signInWithEmailAndPassword(auth, email, senha)
+  } catch (err) {
+    console.log('[ERRO] Login')
+    throw new Error(err)
+  }
+}
 
 const SignOut = async () => await auth.signOut()
 

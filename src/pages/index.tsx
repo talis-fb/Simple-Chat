@@ -28,10 +28,17 @@ import { SignIn, SignUp } from '../firebase/methods'
 const Home: NextPage = () => {
   const app = initializeApp(firebaseConfig)
   const toast = useToast()
+  const toastError = (title: string, description: string) => {
+    toast({
+      title,
+      description,
+      status: 'error',
+      duration: 9000,
+      isClosable: true,
+    })
+  }
 
   const [signInOrUp, setSignInOrUp] = useState(true)
-
-  // const auth = getAuth()
 
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
@@ -55,7 +62,11 @@ const Home: NextPage = () => {
           <FormErrorMessage>Não caga com a senha não...</FormErrorMessage>
         </FormControl>
 
-        <Button type="submit" onClick={() => SignUp(email, senha, { displayName: name })} colorScheme="blue">
+        <Button
+          type="submit"
+          onClick={() => SignIn(email, senha).catch((e) => toastError('ERRO LOGIN', e.message))}
+          colorScheme="blue"
+        >
           Sign In
         </Button>
       </Flex>
@@ -65,7 +76,7 @@ const Home: NextPage = () => {
   const SignUpForm = () => {
     const submit = () => {
       if (senha == senha2) {
-        SignUp(email, senha)
+        SignUp(email, senha).catch((e) => toastError('ERRO Sing Up', e.message))
       } else {
         toast({
           title: 'Senhas diferentes',
@@ -111,10 +122,10 @@ const Home: NextPage = () => {
 
         <ButtonGroup isAttached>
           <Button onClick={() => setSignInOrUp(true)} variant={signInOrUp ? 'solid' : 'outline'} colorScheme="orange">
-            Realizar Login
+            Cadastrar-se
           </Button>
           <Button onClick={() => setSignInOrUp(false)} variant={signInOrUp ? 'outline' : 'solid'} colorScheme="orange">
-            Cadastrar-se
+            Login
           </Button>
         </ButtonGroup>
       </Flex>
