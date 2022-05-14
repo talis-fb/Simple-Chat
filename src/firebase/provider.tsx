@@ -11,7 +11,8 @@ const FirebaseProvider = ({ children }) => {
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        if (router.route == '/') {
+        console.log(router.route)
+        if (router.route == '/' || !router.route) {
           router.push('/chat')
         }
       } else {

@@ -11,24 +11,9 @@ interface IMessage {
 const chatsSlice = createSlice({
   name: 'chats',
   initialState: {
-    open: 'main',
+    open: '',
     chats: {
       // Aqui são adicionados todos os chatos, o chat main se trata da conversa apenas local daqui
-      main: {
-        name: 'Chat',
-        messages: [
-          { body: 'bom dia', from: 'uuid-contato' },
-          { body: 'bom dia', from: 'uuid-contato' },
-          { body: 'bom dia', from: 'uuid-contato' },
-          { body: 'bom dia', from: 'uuid-contato' },
-          { body: 'bom dia', from: 'uuid-contato' },
-          { body: 'bom dia', from: 'uuid-contato' },
-          { body: 'bom dia', from: 'uuid-contato' },
-          { body: 'bom dia', from: 'uuid-contato' },
-          { body: 'bom dia', from: 'uuid-contato' },
-          { body: 'bom dia', from: 'uuid-contato' },
-        ],
-      },
     },
   },
   reducers: {

@@ -227,18 +227,22 @@ const Home: NextPage = () => {
         <Flex h="100%" direction="column" justify="space-between">
           <Flex h="90vh" overflowY="scroll" direction="column">
             {/* Messages */}
-            {conversas[onChat].messages.map((el, i) => {
-              // Trim used because there is a bug when it doesn't
-              const isUser = el.from.trim(el.from) == user.uid.trim(user.uid)
-              return (
-                <Flex align="flex-end" justify={isUser && 'flex-end'} key={i} w="100%" p={3} gap="5px">
-                  {!isUser && <Avatar src={conversas[onChat].photoURL} name={conversas[onChat].name}></Avatar>}
-                  <Box borderRadius="md" bg="green.600" p={5}>
-                    <Text color="whitesmoke">{el.body}</Text>
-                  </Box>
-                </Flex>
-              )
-            })}
+            {onChat ? (
+              conversas[onChat].messages.map((el, i) => {
+                // Trim used because there is a bug when it doesn't
+                const isUser = el.from.trim(el.from) == user.uid.trim(user.uid)
+                return (
+                  <Flex align="flex-end" justify={isUser && 'flex-end'} key={i} w="100%" p={3} gap="5px">
+                    {!isUser && <Avatar src={conversas[onChat].photoURL} name={conversas[onChat].name}></Avatar>}
+                    <Box borderRadius="md" bg="green.600" p={5}>
+                      <Text color="whitesmoke">{el.body}</Text>
+                    </Box>
+                  </Flex>
+                )
+              })
+            ) : (
+              <div>não há nada aqui</div>
+            )}
             <div ref={anchorToScrollDownInSendMessage}></div>
           </Flex>
           <Flex p={2} gap={2} h="10vh" align="center">
