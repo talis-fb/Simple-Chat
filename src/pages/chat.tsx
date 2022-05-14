@@ -32,12 +32,12 @@ import {
   useToast,
   Textarea,
 } from '@chakra-ui/react'
-import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
+import { CloseIcon, EditIcon, SettingsIcon } from '@chakra-ui/icons'
 
 import { getAuth } from 'firebase/auth'
 import { initializeApp } from 'firebase/app'
 import firebaseConfig from '../../firebase-config.json'
-import { sendMessage as submitMessageFirestore, addContact } from '../firebase/methods'
+import { sendMessage as submitMessageFirestore, addContact, getProfilePhotoOrNameUser } from '../firebase/methods'
 
 // Import of useSelector and UseDispatch, but with type of our store
 import { useAppDispatch, useAppSelector } from '../store/hooks'
@@ -101,10 +101,10 @@ const Home: NextPage = () => {
   }
 
   return (
-    <Grid bg="red" h={'100vh'} templateColumns="repeat(4, 1fr)">
-      <GridItem colSpan={1} bg="tomato">
+    <Grid bg="gray.800" h={'100vh'} templateColumns="repeat(4, 1fr)">
+      <GridItem color="white" colSpan={1} bg="gray.900">
         <Flex h={'100%'} direction="column">
-          <HStack>
+          <HStack p="2" mb={2}>
             <Avatar name={user.name}></Avatar>
             <Spacer></Spacer>
             <Button onClick={getPin} colorScheme="teal" variant="solid">
@@ -113,11 +113,14 @@ const Home: NextPage = () => {
             <Spacer></Spacer>
 
             <Menu>
-              <MenuButton as={Button} colorScheme="red" variant="ghost">
-                <HamburgerIcon />
+              <MenuButton as={Button} colorScheme="whitesmoke" variant="ghost">
+                <SettingsIcon />
               </MenuButton>
-              <MenuList>
-                <MenuItem onClick={logout} icon={<CloseIcon />}>
+              <MenuList color="black" bg="teal.600">
+                <MenuItem _hover={{ bg: 'teal.500' }} onClick={logout} icon={<EditIcon />}>
+                  Edit Profile
+                </MenuItem>
+                <MenuItem _hover={{ bg: 'teal.500' }} onClick={logout} icon={<CloseIcon />}>
                   Logout
                 </MenuItem>
               </MenuList>
@@ -128,14 +131,16 @@ const Home: NextPage = () => {
 
           {arrayOfConversasValues.map((el, i) => (
             <VStack
+              p={2}
               key={i}
-              _hover={{ backgroundColor: 'red' }}
+              _hover={{ bg: 'gray.800' }}
               divider={<StackDivider borderColor="gray.200" />}
               spacing={4}
               align="stretch"
               onClick={() => setOnChat(arrayOfConversasKeys[i])}
+              sx={onChat == arrayOfConversasKeys[i] && { bg: 'gray.700', borderRight: '5px solid cyan' }}
             >
-              <Flex p={1}>
+              <Flex gap={2}>
                 <Avatar name={el.name}></Avatar>
                 <Center>
                   <Text>{el.messages[el.messages.length - 1].body}</Text>
@@ -148,17 +153,19 @@ const Home: NextPage = () => {
 
           {/* Modal add contact */}
           <Center>
-            <Button onClick={onOpen}>Open Modal</Button>
+            <Button colorScheme="teal" mb={2} onClick={onOpen}>
+              Open Modal
+            </Button>
             <Modal isOpen={isOpen} onClose={onClose}>
               <ModalOverlay />
-              <ModalContent>
+              <ModalContent bg="cyan.50">
                 <ModalHeader>Adicionr pin...</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
                   <Center>
                     <HStack>
-                      <Text>#</Text>
-                      <PinInput onChange={setPinToAdd} type="alphanumeric">
+                      <Text fontSize="lg">#</Text>
+                      <PinInput colorScheme="white" onChange={setPinToAdd} type="alphanumeric">
                         <PinInputField />
                         <PinInputField />
                         <PinInputField />
@@ -183,17 +190,17 @@ const Home: NextPage = () => {
       </GridItem>
 
       {/* Messages */}
-      <GridItem colSpan={3} bg="papayawhip">
+      <GridItem colSpan={3}>
         <Flex h="100%" direction="column" justify="space-between">
           <Flex maxH="90vh" overflowY="scroll" direction="column">
             {/* Messages */}
             {conversas[onChat].messages.map((el, i) => {
               const isUser = el.from == user.pin
               return (
-                <Flex align="flex-end" justify={isUser && 'flex-end'} key={i} w="100%" p={3} gap="5px" bg="blue">
+                <Flex align="flex-end" justify={isUser && 'flex-end'} key={i} w="100%" p={3} gap="5px">
                   {!isUser && <Avatar name={el.from}></Avatar>}
-                  <Box borderRadius="md" bg="orange" p={5}>
-                    <Text>{el.body}</Text>
+                  <Box borderRadius="md" bg="green.600" p={5}>
+                    <Text color="whitesmoke">{el.body}</Text>
                   </Box>
                 </Flex>
               )
@@ -201,6 +208,7 @@ const Home: NextPage = () => {
           </Flex>
           <Flex p={2} gap={2} h="10vh" align="center">
             <Input
+              color="whitesmoke"
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Digite aqui...."
