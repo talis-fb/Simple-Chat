@@ -40,7 +40,7 @@ import {
   DrawerContent,
   DrawerCloseButton,
 } from '@chakra-ui/react'
-import { CloseIcon, EditIcon, SettingsIcon } from '@chakra-ui/icons'
+import { CloseIcon, EditIcon, SettingsIcon, AddIcon } from '@chakra-ui/icons'
 
 import { getAuth } from 'firebase/auth'
 import { initializeApp } from 'firebase/app'
@@ -63,6 +63,9 @@ import {
   getChatOpen,
   setChatOpen,
 } from '../store/chatsSlice'
+
+// Components
+import DrawerProfile from '../components/DrawerProfile'
 
 const Home: NextPage = () => {
   // store
@@ -127,48 +130,6 @@ const Home: NextPage = () => {
   const [nameProfileSettings, setNameProfileSettings] = useState(user.name)
   const [photoProfileSettings, setPhotoProfileSettings] = useState(user.photoURL)
 
-  const DrawerProfile = () => (
-    <Drawer isOpen={isOpenDrawer} placement="left" onClose={onCloseDrawer}>
-      <DrawerOverlay />
-      <DrawerContent color="whitesmoke" bg="gray.800">
-        <DrawerCloseButton />
-        <DrawerHeader>Ajeite o seu perfil...</DrawerHeader>
-
-        <DrawerBody>
-          <Input
-            value={nameProfileSettings}
-            onChange={(e) => setNameProfileSettings(e.target.value)}
-            mb={5}
-            placeholder="Name"
-          />
-          <Input
-            value={photoProfileSettings}
-            onChange={(e) => setPhotoProfileSettings(e.target.value)}
-            placeholder="Url para a sua foto do perfil"
-          />
-          <Center mt={5} h="200px">
-            <Image maxW="200px" borderRadius="full" fallbackSrc="" src={photoProfileSettings}></Image>
-          </Center>
-        </DrawerBody>
-
-        <DrawerFooter>
-          <Button variant="outline" mr={3} onClick={onCloseDrawer}>
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              updateProfile({ name: nameProfileSettings, photoURL: photoProfileSettings })
-              onCloseDrawer()
-            }}
-            colorScheme="blue"
-          >
-            Save
-          </Button>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
-  )
-
   return (
     <Grid bg="gray.800" h={'100vh'} templateColumns="repeat(4, 1fr)">
       <GridItem color="white" colSpan={1} bg="gray.900">
@@ -187,7 +148,7 @@ const Home: NextPage = () => {
               </MenuButton>
               <MenuList color="black" bg="teal.600">
                 <MenuItem _hover={{ bg: 'teal.500' }} onClick={onOpenDrawer} icon={<EditIcon />}>
-                  {DrawerProfile()}
+                  {<DrawerProfile isOpen={isOpenDrawer} onOpen={onOpenDrawer} onClose={onCloseDrawer} />}
                   Edit Profile
                 </MenuItem>
                 <MenuItem _hover={{ bg: 'teal.500' }} onClick={logout} icon={<CloseIcon />}>
@@ -223,8 +184,8 @@ const Home: NextPage = () => {
 
           {/* Modal add contact */}
           <Center>
-            <Button colorScheme="teal" mb={2} onClick={onOpen}>
-              Open Modal
+            <Button leftIcon={<AddIcon />} colorScheme="teal" mb={2} onClick={onOpen}>
+              Adicionar um contato
             </Button>
             <Modal isOpen={isOpen} onClose={onClose}>
               <ModalOverlay />
