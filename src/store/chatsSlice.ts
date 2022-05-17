@@ -8,6 +8,13 @@ interface IMessage {
   from: string
 }
 
+interface IStore {
+  open: string
+  chats: {
+    [key: string]: any
+  }
+}
+
 const chatsSlice = createSlice({
   name: 'chats',
   initialState: {
@@ -15,7 +22,7 @@ const chatsSlice = createSlice({
     chats: {
       // Aqui são adicionados todos os chatos, o chat main se trata da conversa apenas local daqui
     },
-  },
+  } as IStore,
   reducers: {
     setNewConversation: (
       state,
