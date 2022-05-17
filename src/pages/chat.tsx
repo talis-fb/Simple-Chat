@@ -75,13 +75,13 @@ const Home: NextPage = () => {
   const dispatch = useAppDispatch()
   const app = initializeApp(firebaseConfig)
   const auth = getAuth()
-  const [isOpen, setOpen] = useState(0)
-  const onOpen = () => setOpen(1)
-  const onClose = () => setOpen(0)
+  const [isOpen, setOpen] = useState(false)
+  const onOpen = () => setOpen(true)
+  const onClose = () => setOpen(false)
 
   // Manage of chats
   const [openChat, setOpenChat] = useState<string>('main')
-  const conversas = useAppSelector(selectAllChat)
+  const conversas: { [key: string]: any } = useAppSelector(selectAllChat)
   const onChat = useAppSelector(getChatOpen)
   const setOnChat = (chatName: string) => dispatch(setChatOpen(chatName))
   const arrayOfConversasValues = Object.values(conversas)
@@ -95,7 +95,7 @@ const Home: NextPage = () => {
   // Function to copy PIN
   const { hasCopied, onCopy } = useClipboard(user.pin)
   const toast = useToast()
-  const getPin = (ev) => {
+  const getPin = () => {
     onCopy()
     toast({
       title: 'PIN copiado',
@@ -111,11 +111,12 @@ const Home: NextPage = () => {
 
   // Textarea and send message
   const [text, setText] = useState('')
-  const anchorToScrollDownInSendMessage = useRef()
+  const anchorToScrollDownInSendMessage = useRef<HTMLDivElement>(null)
   const sendMessage = async () => {
     await submitMessageFirestore(conversas[onChat].uid, { body: text, from: user.uid })
     setText('')
-    anchorToScrollDownInSendMessage.current.scrollIntoView({ behavior: 'smooth' })
+    if (anchorToScrollDownInSendMessage.current)
+      anchorToScrollDownInSendMessage.current.scrollIntoView({ behavior: 'smooth' })
   }
 
   const dis = useDisclosure()
@@ -171,7 +172,7 @@ const Home: NextPage = () => {
               spacing={4}
               align="stretch"
               onClick={() => setOnChat(arrayOfConversasKeys[i])}
-              sx={onChat == arrayOfConversasKeys[i] && { bg: 'gray.700', borderRight: '5px solid cyan' }}
+              sx={onChat == arrayOfConversasKeys[i] ? { bg: 'gray.700', borderRight: '5px solid cyan' } : {}}
             >
               <Flex gap={2}>
                 <Avatar src={el.photoURL} name={el.name}></Avatar>
@@ -228,11 +229,11 @@ const Home: NextPage = () => {
           <Flex h="90vh" overflowY="scroll" direction="column">
             {/* Messages */}
             {onChat ? (
-              conversas[onChat].messages.map((el, i) => {
+              conversas[onChat].messages.map((el: { from: string; body: string }, i: number) => {
                 // Trim used because there is a bug when it doesn't
-                const isUser = el.from.trim(el.from) == user.uid.trim(user.uid)
+                const isUser = el.from.trim() == user.uid.trim()
                 return (
-                  <Flex align="flex-end" justify={isUser && 'flex-end'} key={i} w="100%" p={3} gap="5px">
+                  <Flex align="flex-end" justify={isUser ? 'flex-end' : 'flex-start'} key={i} w="100%" p={3} gap="5px">
                     {!isUser && <Avatar src={conversas[onChat].photoURL} name={conversas[onChat].name}></Avatar>}
                     <Box borderRadius="md" bg="green.600" p={5}>
                       <Text color="whitesmoke">{el.body}</Text>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, ChangeEventHandler } from 'react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -43,9 +43,9 @@ const Home: NextPage = () => {
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [senha2, setSenha2] = useState('')
-  const changeEmail = (event) => setEmail(event.target.value)
-  const changePassword = (event) => setSenha(event.target.value)
-  const changePassword2 = (event) => setSenha2(event.target.value)
+  const changeEmail: ChangeEventHandler<HTMLInputElement> = (event) => setEmail(event.target.value)
+  const changePassword: ChangeEventHandler<HTMLInputElement> = (event) => setSenha(event.target.value)
+  const changePassword2: ChangeEventHandler<HTMLInputElement> = (event) => setSenha2(event.target.value)
 
   const SignInForm = () => {
     return (

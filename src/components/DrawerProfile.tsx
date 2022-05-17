@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, FC } from 'react'
 import {
   Input,
   Drawer,
@@ -17,7 +17,13 @@ import { useAppSelector } from '../store/hooks'
 import { updateProfile } from '../firebase/methods'
 import { getUser } from '../store/userSlice'
 
-const DrawerProfile = ({ isOpen, onOpen, onClose }) => {
+interface IDrawer {
+  isOpen: boolean
+  onOpen: () => void
+  onClose: () => void
+}
+
+const DrawerProfile: FC<IDrawer> = ({ isOpen, onOpen, onClose }) => {
   // Get dades in store
   const user = useAppSelector(getUser)
 

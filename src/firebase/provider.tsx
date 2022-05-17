@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, ReactElement } from 'react'
 import { useRouter } from 'next/router'
 
 // Firebase
 import { auth } from './index'
 import { onAuthStateChanged } from 'firebase/auth'
 
-const FirebaseProvider = ({ children }) => {
+const FirebaseProvider = ({ children }: { children: ReactElement }) => {
   const router = useRouter()
 
   useEffect(() => {
