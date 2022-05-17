@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import firebaseConfig from '../../firebase-config.json'
 import { initializeApp } from 'firebase/app'
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth'
+import type { User } from 'firebase/auth'
 import { getFirestore, collection, addDoc, doc, getDoc, setDoc, updateDoc, onSnapshot } from 'firebase/firestore'
 
 import { useAppDispatch, useAppSelector } from '../store/hooks'
@@ -18,7 +19,7 @@ export const db = getFirestore(app)
 
 // Sincronizacao com os dados do Usuario sno firebase em tempor real
 let userFinishSync = () => {}
-const syncUserStoreWithFirestore = (user) => {
+const syncUserStoreWithFirestore = (user: User) => {
   console.log('SYNC USER DISPARADO')
   userFinishSync()
   userFinishSync = onSnapshot(doc(db, 'users', user.uid), (doc) => {
@@ -28,26 +29,41 @@ const syncUserStoreWithFirestore = (user) => {
 }
 
 let chatFinishSync = () => {}
-const syncChatStoreWithFirestore = (user) => {
+const syncChatStoreWithFirestore = (user: User) => {
   console.log('SYNC CHAT DISPARADO')
   chatFinishSync()
   chatFinishSync = onSnapshot(doc(db, 'users', user.uid), (docReturned) => {
-    const allChats = docReturned.data().chats
-    const uidContactsOfChats = Object.keys(allChats)
-    const uidChats = Object.values(allChats)
+    const dadesRetuned = docReturned.data()
+
+    if (!dadesRetuned) {
+      return
+    }
+    const allChats = dadesRetuned.chats || []
+    const uidContactsOfChats: string[] = Object.keys(allChats)
+    const uidChats: string[] = Object.values(allChats)
 
     uidChats.forEach((chatUid, i) => {
       onSnapshot(doc(db, 'chats', chatUid), async (docReturned) => {
-        const allMessages = docReturned.data().messages
-        const dadesOfTheContact = await getDoc(doc(db, 'users', uidContactsOfChats[i]))
+        const dadesRetuned = docReturned.data()
+
+        if (!dadesRetuned) {
+          return
+        }
+        const allMessages = dadesRetuned.messages
+
+        const docContact = await getDoc(doc(db, 'users', uidContactsOfChats[i]))
+        let dadesOfTheContact = docContact.data()
+        if (!dadesOfTheContact) {
+          dadesOfTheContact = { name: '...', photoURL: '' }
+        }
 
         store.dispatch({
           type: 'chats/setNewConversation',
           payload: {
             uid: chatUid,
-            name: dadesOfTheContact.data().name,
+            name: dadesOfTheContact.name,
             messages: allMessages,
-            photoURL: dadesOfTheContact.data().photoURL,
+            photoURL: dadesOfTheContact.photoURL,
           },
         })
       })

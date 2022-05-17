@@ -11,6 +11,7 @@ import {
   where,
   getDocs,
   arrayUnion,
+  DocumentData,
 } from 'firebase/firestore'
 
 // Import of useSelector and UseDispatch, but with type of our store
@@ -25,6 +26,10 @@ const SignUp = async (email: string, senha: string, displayName?: string, photoU
     // Pin do contato
     const pin = Math.floor(Math.random() * 100000).toString()
 
+    if (!auth.currentUser) {
+      return
+    }
+
     // Save in firestore
     const userDoc = doc(db, 'users', auth.currentUser.uid)
     await setDoc(userDoc, {
@@ -37,7 +42,7 @@ const SignUp = async (email: string, senha: string, displayName?: string, photoU
     return { error: false, message: '' }
   } catch (err) {
     console.log('[ERRO] Sign Uo')
-    throw new Error(err)
+    throw err
   }
 }
 
@@ -46,7 +51,7 @@ const SignIn = async (email: string, senha: string) => {
     const login = await signInWithEmailAndPassword(auth, email, senha)
   } catch (err) {
     console.log('[ERRO] Login')
-    throw new Error(err)
+    throw err
   }
 }
 
@@ -54,7 +59,12 @@ const SignOut = async () => await auth.signOut()
 
 const updateProfile = async (dades: { name: string; photoURL: string }) => {
   const { name, photoURL } = dades
-  const userDoc = doc(db, 'users', auth.currentUser.uid)
+  if (!auth.currentUser) {
+    throw new Error('[UPDATE PROFILE] No user Authenticated')
+  }
+
+  const user = auth.currentUser.uid
+  const userDoc = doc(db, 'users', user)
   await updateDoc(userDoc, {
     name: name || null,
     photoURL: photoURL || null,
@@ -62,19 +72,25 @@ const updateProfile = async (dades: { name: string; photoURL: string }) => {
 }
 
 const getProfilePhotoOrNameUser = async (uid: string) => {
-  const dadesOfUser = await getDoc(doc(db, 'users', uid))
+  const docUser = await getDoc(doc(db, 'users', uid))
+  const dadesOfUser = docUser.data()
   console.log('dadesOfUser')
   console.log(dadesOfUser)
-  return dadesOfUser.data().photoURL || dadesOfUser.data().name || 'Foi'
+
+  if (!dadesOfUser) {
+    return ''
+  }
+
+  return dadesOfUser.photoURL || dadesOfUser.name || 'Foi'
 }
 
-const getUserWithPin = async (pin: string) => {
+const getUserWithPin = async (pin: string): Promise<DocumentData> => {
   // Cria a query para extrair
   const q = query(collection(db, 'users'), where('pin', '==', pin))
   const dadesOfUser = await getDocs(q)
 
   // Salva o dado extraido e retorna
-  let dades
+  let dades: DocumentData = {}
   dadesOfUser.forEach((doc) => {
     dades = doc.data()
   })
@@ -83,6 +99,10 @@ const getUserWithPin = async (pin: string) => {
 }
 
 const addContact = async (pinToAdd: string, pinAdding: string) => {
+  if (!auth.currentUser) {
+    throw new Error('[ADD CONTACT ERROR] No user Authenticated')
+  }
+
   const whoAdd = await getUserWithPin(pinToAdd)
   const whoIsAdding = await getUserWithPin(pinAdding)
   console.log(whoAdd)
@@ -96,10 +116,11 @@ const addContact = async (pinToAdd: string, pinAdding: string) => {
   }
 
   // Save in firestore
+  const user = auth.currentUser.uid
   const pinChat = Math.floor(Math.random() * 100000).toString()
   const chatDoc = doc(db, 'chats', pinChat)
   await setDoc(chatDoc, {
-    messages: [{ body: 'hello', from: auth.currentUser.uid }],
+    messages: [{ body: 'hello', from: user }],
   })
   // Criação de um chat novo
 
