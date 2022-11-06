@@ -2589,11 +2589,6 @@ fs.realpath@^1.0.0:
   resolved "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   integrity sha1-FQStJSMVjKpA20onh8sBQRmU6k8=
 
-fs@^0.0.1-security:
-  version "0.0.1-security"
-  resolved "https://registry.npmjs.org/fs/-/fs-0.0.1-security.tgz"
-  integrity sha1-invTcYa23d84E/I4WLV+yq9eQdQ=
-
 function-bind@^1.1.1:
   version "1.1.1"
   resolved "https://registry.npmjs.org/function-bind/-/function-bind-1.1.1.tgz"
