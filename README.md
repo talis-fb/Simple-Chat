@@ -1,7 +1,10 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-![screnshoot](./screenshot_1.png)
 A basic and simples chat built with NextJS and Firebase
+
+You can check it out [HERE!](https://simple-chat-talis-fb.vercel.app/)
+
+![screnshoot](./screenshot_1.png)
 
 ## Languages and tools...
 <p align="left">
